@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+View species_of_plant: {{ item.id }}
+{% endblock title %}
+
+{% block page_title %}
+View species_of_plant: {{ item.id }}
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="mb-10">
+    <div>
+    <label><b>{{"common_name" | capitalize }}:</b> {{item.common_name}}</label>
+    </div>
+<div>
+    <label><b>{{"scientific_name" | capitalize }}:</b> {{item.scientific_name}}</label>
+    </div>
+<div>
+    <label><b>{{"family_name" | capitalize }}:</b> {{item.family_name}}</label>
+    </div>
+<div>
+    <label><b>{{"care_instructions" | capitalize }}:</b> {{item.care_instructions}}</label>
+    </div>
+<div>
+    <label><b>{{"origin" | capitalize }}:</b> {{item.origin}}</label>
+    </div>
+<div>
+    <label><b>{{"photo_url" | capitalize }}:</b> {{item.photo_url}}</label>
+    </div>
+<br />
+<a href="/species_of_plants">Back to species_of_plants</a>
+</div>
+{% endblock content %}
