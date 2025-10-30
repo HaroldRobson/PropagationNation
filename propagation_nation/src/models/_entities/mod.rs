@@ -2,6 +2,7 @@
 
 pub mod prelude;
 
+pub mod cars;
 pub mod chats;
 pub mod plants;
 pub mod species_of_plants;

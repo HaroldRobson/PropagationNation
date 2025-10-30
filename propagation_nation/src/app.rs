@@ -51,6 +51,7 @@ impl Hooks for App {
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes() // controller routes below
+            .add_route(controllers::car::routes())
             .add_route(controllers::chat::routes())
             .add_route(controllers::plant::routes())
             .add_route(controllers::species_of_plant::routes())

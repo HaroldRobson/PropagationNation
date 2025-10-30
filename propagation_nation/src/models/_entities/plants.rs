@@ -3,7 +3,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "plants")]
 pub struct Model {
     pub created_at: DateTimeWithTimeZone,
@@ -11,8 +11,10 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub name: String,
-    pub lat: i32,
-    pub lon: i32,
+    #[sea_orm(column_type = "Float", nullable)]
+    pub lat: Option<f32>,
+    #[sea_orm(column_type = "Float", nullable)]
+    pub lon: Option<f32>,
     pub description: Option<String>,
     pub user_id: i32,
     pub species_of_plant_id: i32,

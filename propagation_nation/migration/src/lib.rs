@@ -7,6 +7,7 @@ mod m20251029_194315_species_of_plants;
 mod m20251029_194711_plants;
 mod m20251029_194834_chats;
 mod m20251029_195229_add_lat_lon_given_received_to_users;
+mod m20251029_212607_cars;
 pub struct Migrator;
 
 #[async_trait::async_trait]
@@ -18,6 +19,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20251029_194711_plants::Migration),
             Box::new(m20251029_194834_chats::Migration),
             Box::new(m20251029_195229_add_lat_lon_given_received_to_users::Migration),
+            Box::new(m20251029_212607_cars::Migration),
             // inject-above (do not remove this comment)
         ]
     }

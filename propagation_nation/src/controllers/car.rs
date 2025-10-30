@@ -2,33 +2,27 @@
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
 use loco_rs::prelude::*;
-use sea_orm::{sea_query::Order, QueryOrder};
 use serde::{Deserialize, Serialize};
+use sea_orm::{sea_query::Order, QueryOrder};
 
 use crate::{
-    models::_entities::plants::{ActiveModel, Column, Entity, Model},
+    models::_entities::cars::{ActiveModel, Column, Entity, Model},
     views,
 };
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
-    pub name: String,
-    pub user_id: i32,
-    pub species_of_plant_id: i32,
-    pub lat: Option<f32>,
-    pub lon: Option<f32>,
-    pub description: Option<String>,
-}
+    pub engine: i32,
+    pub capacity: i32,
+    pub name: Option<String>,
+    }
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
-        item.name = Set(self.name.clone());
-        item.user_id = Set(self.user_id);
-        item.species_of_plant_id = Set(self.species_of_plant_id);
-        item.lat = Set(self.lat);
-        item.lon = Set(self.lon);
-        item.description = Set(self.description.clone());
-    }
+      item.engine = Set(self.engine);
+      item.capacity = Set(self.capacity);
+      item.name = Set(self.name.clone());
+      }
 }
 
 async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
@@ -45,7 +39,7 @@ pub async fn list(
         .order_by(Column::Id, Order::Desc)
         .all(&ctx.db)
         .await?;
-    views::plant::list(&v, &item)
+    views::car::list(&v, &item)
 }
 
 #[debug_handler]
@@ -53,7 +47,7 @@ pub async fn new(
     ViewEngine(v): ViewEngine<TeraView>,
     State(_ctx): State<AppContext>,
 ) -> Result<Response> {
-    views::plant::create(&v)
+    views::car::create(&v)
 }
 
 #[debug_handler]
@@ -66,7 +60,7 @@ pub async fn update(
     let mut item = item.into_active_model();
     params.update(&mut item);
     let _ = item.update(&ctx.db).await?;
-    format::render().redirect_with_header_key("HX-Redirect", "/plants")
+    format::render().redirect_with_header_key("HX-Redirect", "/cars")
 }
 
 #[debug_handler]
@@ -76,7 +70,7 @@ pub async fn edit(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     let item = load_item(&ctx, id).await?;
-    views::plant::edit(&v, &item)
+    views::car::edit(&v, &item)
 }
 
 #[debug_handler]
@@ -86,17 +80,20 @@ pub async fn show(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     let item = load_item(&ctx, id).await?;
-    views::plant::show(&v, &item)
+    views::car::show(&v, &item)
 }
 
 #[debug_handler]
-pub async fn add(State(ctx): State<AppContext>, Json(params): Json<Params>) -> Result<Response> {
+pub async fn add(
+    State(ctx): State<AppContext>,
+    Json(params): Json<Params>,
+) -> Result<Response> {
     let mut item = ActiveModel {
         ..Default::default()
     };
     params.update(&mut item);
     let _ = item.insert(&ctx.db).await?;
-    format::render().redirect_with_header_key("HX-Redirect", "/plants")
+    format::render().redirect_with_header_key("HX-Redirect", "/cars")
 }
 
 #[debug_handler]
@@ -107,7 +104,7 @@ pub async fn remove(Path(id): Path<i32>, State(ctx): State<AppContext>) -> Resul
 
 pub fn routes() -> Routes {
     Routes::new()
-        .prefix("plants/")
+        .prefix("cars/")
         .add("/", get(list))
         .add("/", post(add))
         .add("new", get(new))

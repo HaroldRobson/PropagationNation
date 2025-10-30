@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+View car: {{ item.id }}
+{% endblock title %}
+
+{% block page_title %}
+View car: {{ item.id }}
+{% endblock page_title %}
+
+
+{% block content %}
+<div class="mb-10">
+    <div>
+    <label><b>{{"engine" | capitalize }}:</b> {{item.engine}}</label>
+    </div>
+<div>
+    <label><b>{{"capacity" | capitalize }}:</b> {{item.capacity}}</label>
+    </div>
+<div>
+    <label><b>{{"name" | capitalize }}:</b> {{item.name}}</label>
+    </div>
+<br />
+<a href="/cars">Back to cars</a>
+</div>
+{% endblock content %}

@@ -41,38 +41,32 @@ plant
                         </th>
                     </tr>
                 </thead>
-                <tbody class="[&amp;_tr:last-child]:border-0">
-                   {% for item in items %}
-                    <tr class="border-b transition-colors hover:bg-muted/50">
-                        <td
-                            class="p-2 align-middle  font-medium">
-                            {{item.name | escape }}
-                        </td>
-                        <td
-                            class="p-2 align-middle  font-medium">
-                            {{item.user_id | escape }}
-                        </td>
-                        <td
-                            class="p-2 align-middle  font-medium">
-                            {{item.species_of_plant_id | escape }}
-                        </td>
-                        <td
-                            class="p-2 align-middle  font-medium">
-                            {{item.lat | escape }}
-                        </td>
-                        <td
-                            class="p-2 align-middle  font-medium">
-                            {{item.lon | escape }}
-                        </td>
-                        <td
-                            class="p-2 align-middle  font-medium">
-                            {{item.description | escape }}
-                        </td>
-                        <td>
-                            <a href="/plants/{{ item.id }}/edit">Edit</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                <tbody class="[&_tr:last-child]:border-0">
+                    {% for item in items %}
+                        <tr class="border-b transition-colors hover:bg-muted/50">
+                            <td class="p-2 align-middle font-medium">
+                                {{item.name | escape }}
+                            </td>
+                            <td class="p-2 align-middle font-medium">
+                                {{item.user_id}}
+                            </td>
+                            <td class="p-2 align-middle font-medium">
+                                {{item.species_of_plant_id}}
+                            </td>
+                            <td class="p-2 align-middle font-medium">
+                                {% if item.lat %}{{item.lat}}{% else %}N/A{% endif %}
+                            </td>
+                            <td class="p-2 align-middle font-medium">
+                                {% if item.lon %}{{item.lon}}{% else %}N/A{% endif %}
+                            </td>
+                            <td class="p-2 align-middle font-medium">
+                                {% if item.description %}{{item.description | escape}}{% else %}N/A{% endif %}
+                            </td>
+                            <td class="p-2 align-middle font-medium">
+                                <a href="/plants/{{ item.id }}/edit" class="text-blue-600">Edit</a>
+                            </td>                  
+                        </tr>
+                        {% endfor %}
                 </tbody>
             </table>
         </div>
