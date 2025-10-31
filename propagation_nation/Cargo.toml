@@ -1,4 +1,5 @@
 [workspace]
+members = ["location_algorithm"]
 
 [package]
 name = "propagation_nation"
