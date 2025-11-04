@@ -99,7 +99,7 @@ trait DisplayStruct {
 impl DisplayStruct for ListElement {
     fn display(&self) -> impl IntoView {
         view! {
-            <button> meow</button>
+            <button> fmt!("text: {:?}, id: {:?}", self.text, self.id)</button>
         }
     }
 }
@@ -121,6 +121,12 @@ pub fn DynamicList() -> impl IntoView {
         children=move |tuple: (i32, i32)| {
             view! {
                 <button>"List Element: " {move || (tuple.0, tuple.1)}</button>
+                <button> ""
+                {ListElement{
+                                          id: tuple.1.clone(),
+                                        text: "meowie says hello".to_string(),
+                                      }.display()}
+                </button>
                 <button on:click=move |_| {
                     set_list.update(|list| list.retain(|(_, id)| id != &tuple.1));
                 }> "remove"</button>
