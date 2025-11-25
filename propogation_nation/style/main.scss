@@ -1,0 +1,269 @@
+// Modern Plant Community Aesthetic
+
+// Color Palette - Earthy & Fresh
+$primary-green: #2d5016;
+$accent-green: #4a7c2c;
+$light-green: #e8f5e1;
+$cream: #faf9f6;
+$earth-brown: #8b7355;
+$text-dark: #2c2c2c;
+$text-light: #666;
+$error-red: #c44536;
+$success-green: #4a7c2c;
+$border-color: #d4d9d0;
+
+// Typography
+$font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', sans-serif;
+
+// Reset & Base
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-stack;
+  background: linear-gradient(135deg, $light-green 0%, #f5f3ed 100%);
+  color: $text-dark;
+  line-height: 1.6;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, $light-green 0%, #f5f3ed 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+// Typography
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $primary-green;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+h3, h4 {
+  color: $primary-green;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+  color: $accent-green;
+}
+
+p {
+  color: $text-light;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+// Forms
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid $border-color;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $font-stack;
+  transition: all 0.2s ease;
+  background: white;
+  margin-bottom: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: $accent-green;
+    box-shadow: 0 0 0 3px rgba(74, 124, 44, 0.1);
+  }
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+// Buttons
+button {
+  background: $accent-green;
+  color: white;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: $font-stack;
+  margin-top: 0.5rem;
+
+  &:hover {
+    background: $primary-green;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Fieldsets - Organic sectioning
+fieldset {
+  border: 2px solid $light-green;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to bottom, white, #fafff7);
+
+  legend {
+    color: $primary-green;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0 0.75rem;
+    margin-left: -0.5rem;
+  }
+
+  // Nested fieldsets (like in your forms)
+  fieldset {
+    border-color: $border-color;
+    background: white;
+    margin-top: 1rem;
+    
+    legend {
+      font-size: 0.95rem;
+      color: $text-dark;
+    }
+  }
+}
+
+// Checkboxes & Labels
+label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $text-dark;
+  cursor: pointer;
+  margin: 1rem 0;
+
+  input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+    accent-color: $accent-green;
+  }
+}
+
+// Success/Error States
+.success {
+  background: linear-gradient(135deg, #e8f5e1 0%, #d4f1c5 100%);
+  border-left: 4px solid $success-green;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+
+  p {
+    color: $primary-green;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.error {
+  background: linear-gradient(135deg, #ffe8e5 0%, #ffd4cf 100%);
+  border-left: 4px solid $error-red;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+
+  p {
+    color: $error-red;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+// Direct <p> success/error messages (for your Show components)
+p {
+  &:has-text("Success") {
+    color: $success-green;
+    font-weight: 600;
+  }
+  
+  &:has-text("Error") {
+    color: $error-red;
+    font-weight: 600;
+  }
+}
+
+// Hidden inputs
+input[type="hidden"] {
+  display: none;
+}
+
+// Loading states
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+
+  &:hover {
+    background: #ccc;
+    box-shadow: none;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+
+  main {
+    padding: 2rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  fieldset {
+    padding: 1rem;
+  }
+}
+
+// Subtle animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success, .error {
+  animation: fadeIn 0.3s ease;
+}
