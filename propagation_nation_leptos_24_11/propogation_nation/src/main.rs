@@ -14,6 +14,7 @@ async fn main() {
     use propogation_nation::types::AppState;
     use serde::{Deserialize, Serialize};
     use sqlx::postgres::PgPoolOptions;
+    use std::env;
     use std::sync::Arc;
     use tower_sessions::{Expiry, MemoryStore, Session, SessionManagerLayer};
 
@@ -37,9 +38,11 @@ async fn main() {
     // Generate the list of routes in your Leptos App
     let routes = generate_route_list(App);
 
+    dotenv::dotenv().ok();
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = PgPoolOptions::new()
         .max_connections(100)
-        .connect("postgresql://postgres@localhost:5432/leptos_dev")
+        .connect(&database_url)
         .await
         .unwrap();
     let store = Arc::new(MemoryStore::default());

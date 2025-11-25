@@ -24,9 +24,16 @@ serde = "1.0.228"
 uuid = { version = "1.18.1", features = ["v4"], optional = true }
 anyhow = "1.0.100"
 lettre = { version = "0.11", optional = true }
+dotenv = { version = "0.15", optional = true }
+leptos-use = { version = "0.16", features = ["use_cookie"] }
 
 [features]
-hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen"]
+hydrate = [
+  "leptos/hydrate",
+  "dep:console_error_panic_hook",
+  "dep:wasm-bindgen",
+  #  "dep:leptos-use",
+]
 ssr = [
   "dep:axum",
   "dep:tokio",
@@ -38,6 +45,9 @@ ssr = [
   "dep:tower-sessions",
   "dep:uuid",
   "dep:lettre",
+  "dep:dotenv",
+  "leptos-use/ssr",
+  "leptos-use/axum",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
