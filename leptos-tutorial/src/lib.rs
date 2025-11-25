@@ -1,5 +1,6 @@
 use leptos::prelude::*;
 use leptos_meta::*;
+use leptos_router::components::{Route, Router, Routes};
 use leptos_router::{components::*, path};
 // Modules
 mod components;
@@ -9,14 +10,42 @@ mod pages;
 // Top-Level pages
 use crate::pages::home::Home;
 
-/// An app router which renders the homepage and handles 404's
 #[component]
 pub fn App() -> impl IntoView {
+    view! {
+        <Router>
+            <nav>
+            <List/>
+            </nav>
+            <main>
+            <Main/>
+            </main>
+        </Router>
+    }
+}
+/// An app router which renders the homepage and handles 404's
+#[component]
+pub fn Main() -> impl IntoView {
     let (count, set_count) = signal(69);
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
+    let state = AppState {
+        num1: 2u32,
+        num2: 3u32,
+    };
+    provide_context(state);
 
     view! {
+        <head>
+            Bunting
+            </head>
+
+        <TakesChildren render_prop=ContextExample>
+        <section>
+            <TextList/>
+        </section>
+        </TakesChildren>
+
         <button on:click=move |_| set_count.set(3)
             >
             "bunting says meow: "
@@ -28,8 +57,40 @@ pub fn App() -> impl IntoView {
         </p>
             <App2/>
             <DynamicList/>
-            <Button/>
 
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AppState {
+    num1: u32,
+    num2: u32,
+}
+
+#[component]
+pub fn TakesChildren<F, IV>(render_prop: F, children: Children) -> impl IntoView
+where
+    F: Fn() -> IV,
+    IV: IntoView,
+{
+    view! {
+        <h1><code>"Bunting Says Hi"</code></h1>
+        <h2>"context:"</h2>
+        {render_prop()}
+        <hr/>
+        <h2>"children (textlist)"</h2>
+        {children()}
+        <hr/>
+    }
+}
+
+#[component]
+pub fn ContextExample() -> impl IntoView {
+    let state = use_context::<AppState>().expect("no context provided");
+    view! {
+        <p>
+        {format!("num1: {:?}, num2: {:?}", state.num1, state.num2)}
+        </p>
     }
 }
 
@@ -87,19 +148,20 @@ pub fn List() -> impl IntoView {
     }
 }
 
+#[derive(Clone, Debug)]
 struct ListElement {
     id: i32,
     text: String,
 }
 
 trait DisplayStruct {
-    fn display(&self) -> impl IntoView;
+    fn display(self) -> impl IntoView;
 }
 
 impl DisplayStruct for ListElement {
-    fn display(&self) -> impl IntoView {
+    fn display(self) -> impl IntoView {
         view! {
-            <button> fmt!("text: {:?}, id: {:?}", self.text, self.id)</button>
+            <button>{format!("text: {:?}, id: {:?}", self.text, self.id)}</button>
         }
     }
 }
@@ -119,14 +181,12 @@ pub fn DynamicList() -> impl IntoView {
     <For each=move || list.get()
         key=|x| x.1
         children=move |tuple: (i32, i32)| {
+            let element = ListElement {
+                id: tuple.1,
+                text: "meowie says hello".to_string(),
+            };
             view! {
-                <button>"List Element: " {move || (tuple.0, tuple.1)}</button>
-                <button> ""
-                {ListElement{
-                                          id: tuple.1.clone(),
-                                        text: "meowie says hello".to_string(),
-                                      }.display()}
-                </button>
+                <button>{element.display().into_view()} </button>
                 <button on:click=move |_| {
                     set_list.update(|list| list.retain(|(_, id)| id != &tuple.1));
                 }> "remove"</button>
@@ -138,6 +198,39 @@ pub fn DynamicList() -> impl IntoView {
         }
 }
 
+#[component]
+pub fn TextList() -> impl IntoView {
+    let (list, set_list) = signal::<Vec<ListElement>>(vec![]);
+    let (counter, set_counter) = signal(0);
+    let (text, set_text) = signal("type here".to_string());
+    view! {
+        <ProgressBar progress = counter/>
+            <input type="text"
+            on:input:target=move |ev| {
+                set_text.set(ev.target().value());
+            }
+             prop:value=text/>
+            <button on:click=move |_| {
+                set_list.update(|list| list.push(ListElement {id: counter.get(), text: text.get()}));
+                set_counter.update(|c: &mut i32| *c += 1);
+
+            }> save</button>
+    <For each=move || list.get()
+            key=|x| x.id
+            children=move |element: ListElement| {
+                let ec = element.clone();
+                view! {
+                    <div style="border: 2px solid red; padding: 10px; margin: 10px; background-color: lightblue;">
+                    <button>{ec.display().into_view()} </button>
+                    <button on:click=move |_| {
+                        set_list.update(|list| list.retain(|e| e.id != element.id));
+                    }> "remove"</button>
+                    </div>
+                }
+            }
+        />
+        }
+}
 #[component]
 fn DynamicList2(
     /// The number of counters to begin with.
