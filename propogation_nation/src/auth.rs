@@ -220,6 +220,7 @@ pub async fn validate_and_create_user(
     id: String,
     name: String,
     description: String,
+    email_public: Option<String>,
     lat: f32,
     lon: f32,
 ) -> Result<(), ServerFnError> {
@@ -253,14 +254,15 @@ pub async fn validate_and_create_user(
         }
     };
     let pool = &app_state.pool;
-    sqlx::query!("INSERT INTO users (email, password, name, description, lat, lon) VALUES ($1, $2, $3, $4, $5, $6)",
-    invalidated_user.email.0, invalidated_user.password, name, description, lat, lon)
+    let email_public = email_public.is_some();
+    sqlx::query!("INSERT INTO users (email, password, name, description, email_public, lat, lon) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+    invalidated_user.email.0, invalidated_user.password, name, description, email_public, lat, lon)
         .execute(pool).await?;
     app_state
         .sesh
         .remove::<InvalidatedUser>(id.as_str())
         .await?;
-
+    leptos_axum::redirect("/homepage");
     Ok(())
 }
 
@@ -291,7 +293,7 @@ pub fn ValidateUserView() -> impl IntoView {
             <legend>"Your Name"</legend>
         <input type="text"
         name="name"
-        placeholder="enter your email"
+        placeholder="your name"
         />
         </fieldset>
         <fieldset>
@@ -313,14 +315,11 @@ pub fn ValidateUserView() -> impl IntoView {
             step="0.000001"
             name="lon"
        />
-
         </fieldset>
-
-
         <label>
-            "I Agree to receive email Updates"
+            "I want my email publicly visible"
             <input type="checkbox"
-            name="spam_me"
+            name="email_public"
             />
         </label>
       <button type="submit">"Submit"</button>
@@ -349,7 +348,11 @@ pub fn ValidateUserView() -> impl IntoView {
 }
 
 #[server]
-pub async fn sign_in(email: String, password: String) -> Result<String, ServerFnError> {
+pub async fn sign_in(
+    email: String,
+    password: String,
+    redirect_page: String,
+) -> Result<String, ServerFnError> {
     use crate::types::AppState;
     use crate::types::UserDetails;
     use crate::types::UserSessionSS;
@@ -388,11 +391,18 @@ pub async fn sign_in(email: String, password: String) -> Result<String, ServerFn
     .await?;
     let id = Uuid::new_v4().to_string();
 
-    let user_session_ss = user_details.to_UserSessionCS();
+    let user_session_ss = user_details.to_UserSessionSS();
 
     app_state.sesh.insert(id.as_str(), user_session_ss).await?;
+    dbg!(redirect_page.as_str());
+    leptos_axum::redirect(redirect_page.as_str());
 
     Ok(id)
+}
+
+#[derive(Params, PartialEq, Clone)]
+struct RedirectParams {
+    page: Option<String>,
 }
 
 use crate::types::UserStateCS;
@@ -404,10 +414,23 @@ pub fn SignIn() -> impl IntoView {
     let (password, set_password) = signal("".to_string());
     let (error, set_error) = signal(None::<String>);
     let (success, set_success) = signal(false);
-    let sign_in_action = Action::new(|(e, p): &(String, String)| {
+    let redirect_query = use_query::<RedirectParams>();
+    dbg!(redirect_query);
+    let redirect_page = match redirect_query
+        .read()
+        .as_ref()
+        .ok()
+        .and_then(|rp| rp.to_owned().page)
+    {
+        None => "/".to_owned(),
+        Some(r_page) => format!("/{}", r_page.trim_start_matches("/")),
+    };
+
+    let sign_in_action = Action::new(move |(e, p, r): &(String, String, String)| {
         let e = e.clone();
         let p = p.clone();
-        async move { sign_in(e.to_owned(), p.to_owned()).await }
+        let r = r.clone();
+        async move { sign_in(e, p, r).await }
     });
     let (state, set_state) = use_cookie::<UserStateCS, JsonSerdeCodec>("state");
     Effect::new(move |_| {
@@ -463,7 +486,7 @@ pub fn SignIn() -> impl IntoView {
             leptos::logging::log!("Action value: {:?}", sign_in_action.value().get());
             set_error.set(None);
             sign_in_action.clear();
-            sign_in_action.dispatch((email.get(), password.get()));
+            sign_in_action.dispatch((email.get(), password.get(), redirect_page.clone()));
         }>"Sign In" </button>
     <Show
         when=move || success.get()

@@ -1,7 +1,9 @@
 pub mod app;
 pub mod auth;
+pub mod home;
 pub mod types;
-
+pub mod user;
+pub mod utils;
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {

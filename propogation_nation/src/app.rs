@@ -3,6 +3,7 @@ use crate::auth::RequestPasswordResetView;
 use crate::auth::ResetPasswordView;
 use crate::auth::SignIn;
 use crate::auth::ValidateUserView;
+use crate::home::HomePage;
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
@@ -48,9 +49,12 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=HomePage/>
+                    <Route path=StaticSegment("") view=LandingPage/>
+                    <Route path=path!("/homepage") view = HomePage/>
                     <Route path=path!("/validate/:id") view=ValidateUserView/>
                     <Route path=path!("/reset/:id") view=ResetPasswordView/>
+                    <Route path=path!("/signin") view=SignIn/>
+                    <Route path=path!("/demo") view = Demo/>
                 </Routes>
             </main>
         </Router>
@@ -59,7 +63,7 @@ pub fn App() -> impl IntoView {
 
 /// Renders the home page of your application.
 #[component]
-fn HomePage() -> impl IntoView {
+fn LandingPage() -> impl IntoView {
     // Creates a reactive value to update the button
     let (state, set_state) = use_cookie::<UserStateCS, JsonSerdeCodec>("state");
     let signed_in = Resource::new(
@@ -121,5 +125,55 @@ pub async fn check_session_exists(id: String) -> Result<bool, ServerFnError> {
             "problen with tower store: {:?}",
             e
         ))),
+    }
+}
+
+use leptos::prelude::*;
+use leptos_use::{use_geolocation, UseGeolocationReturn};
+
+#[component]
+fn Demo() -> impl IntoView {
+    let UseGeolocationReturn {
+        coords,
+        located_at,
+        error,
+        resume,
+        pause,
+    } = use_geolocation();
+
+    view! {
+        <pre lang="json">
+            coords:
+            {move || {
+                if let Some(coords) = coords.get() {
+                    format!(
+                        r#"{{
+        accuracy: {},
+        latitude: {},
+        longitude: {},
+        altitude: {:?},
+        altitude_accuracy: {:?},
+        heading: {:?},
+        speed: {:?},
+    }}"#,
+                        coords.accuracy(),
+                        coords.latitude(),
+                        coords.longitude(),
+                        coords.altitude(),
+                        coords.altitude_accuracy(),
+                        coords.heading(),
+                        coords.speed(),
+                    )
+                } else {
+                    "None".to_string()
+                }
+            }}
+            ,
+            located_at: {located_at} ,
+            error:
+            {move || if let Some(error) = error.get() { error.message() } else { "None".to_string() }} ,
+        </pre>
+        <button on:click=move |_| pause()>"Pause watch"</button>
+        <button on:click=move |_| resume()>"Resume watch"</button>
     }
 }

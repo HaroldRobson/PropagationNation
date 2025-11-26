@@ -43,7 +43,7 @@ pub struct UserDetails {
 
 #[cfg(feature = "ssr")]
 impl UserDetails {
-    pub fn to_UserSessionCS(self) -> UserSessionSS {
+    pub fn to_UserSessionSS(self) -> UserSessionSS {
         UserSessionSS::new(self.id, self.email, self.name)
     }
 }
@@ -68,4 +68,36 @@ impl Default for UserStateCS {
     fn default() -> Self {
         return Self { session_id: None };
     }
+}
+
+use time::OffsetDateTime;
+// only FromRow if server side (cfg_attr is such a cool macro!):
+use serde::*;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
+struct Plant {
+    pub id: i32,
+    pub name: String,
+    pub description: String,
+    pub created_at: time::OffsetDateTime,
+    pub location: String,
+    pub user_id: i32, // owner
+    pub picture_urls: Vec<String>,
+    #[cfg(feature = "ssr")] // only let the server be able to view exact location
+    pub lat: f32,
+    #[cfg(feature = "ssr")]
+    pub lon: f32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
+pub struct UserDetailsFull {
+    pub id: i32,
+    pub email: Option<String>, // depends on email_public in users
+    pub name: String,
+    pub picture_url: Option<String>,
+    pub location: String,
+    pub description: String,
+    pub created_at: time::OffsetDateTime,
 }

@@ -25,7 +25,13 @@ uuid = { version = "1.18.1", features = ["v4"], optional = true }
 anyhow = "1.0.100"
 lettre = { version = "0.11", optional = true }
 dotenv = { version = "0.15", optional = true }
-leptos-use = { version = "0.16", features = ["use_cookie"] }
+leptos-use = { version = "0.16", features = ["use_cookie", "use_geolocation"] }
+time = { version = "0.3", features = [
+  "serde",
+  "macros",
+  "formatting",
+  "parsing",
+] }
 
 [features]
 hydrate = [
