@@ -1,9 +1,10 @@
-use crate::auth::CreateInvalidatedUserView;
-use crate::auth::RequestPasswordResetView;
-use crate::auth::ResetPasswordView;
-use crate::auth::SignIn;
-use crate::auth::ValidateUserView;
 use crate::home::HomePage;
+use crate::inputpages::auth::CreateInvalidatedUserView;
+use crate::inputpages::auth::RequestPasswordResetView;
+use crate::inputpages::auth::ResetPasswordView;
+use crate::inputpages::auth::SignIn;
+use crate::inputpages::auth::ValidateUserView;
+use crate::inputpages::user::AddUserDetails;
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
@@ -55,6 +56,7 @@ pub fn App() -> impl IntoView {
                     <Route path=path!("/reset/:id") view=ResetPasswordView/>
                     <Route path=path!("/signin") view=SignIn/>
                     <Route path=path!("/demo") view = Demo/>
+                    <Route path=path!("/adduserdetails") view= AddUserDetails/>
                 </Routes>
             </main>
         </Router>

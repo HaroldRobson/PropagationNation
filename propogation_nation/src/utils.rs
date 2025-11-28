@@ -1,5 +1,7 @@
 use anyhow::{anyhow, Result};
+use file_type::FileType;
 use leptos::prelude::ServerFnError;
+use leptos::prelude::*;
 
 #[cfg(feature = "ssr")]
 pub async fn get_user_session(
@@ -21,7 +23,6 @@ pub async fn get_user_session(
     {
         Ok(us) => us,
         Err(e) => {
-            leptos_axum::redirect("/signin?page=adduserdetails");
             return Err(ServerFnError::Registration(
                 "user needs to re-sign in".to_string(),
             ));
@@ -31,7 +32,6 @@ pub async fn get_user_session(
     let user_session_ss = match user_session_ss {
         Some(usss) => usss,
         None => {
-            leptos_axum::redirect("/signin?page=adduserdetails");
             return Err(ServerFnError::Registration(
                 "user needs to re-sign in".to_string(),
             ));
